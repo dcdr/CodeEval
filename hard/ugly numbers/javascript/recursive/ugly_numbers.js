@@ -1,24 +1,8 @@
 var fs = require('fs');
 
-var results = 0;
-var primes = [2, 3, 5, 7];
-
-var isUgly = function(candidate) {
-	for(var i in primes) {
-		if (0 === candidate % primes[i]) return true;
-	}
-	return false;
-};
-
-var reportIfUgly = function(num) {
-	if (isUgly(num)) {
-		results++;
-	}
-};
-
 // All of this to avoid octals
-var eval1 = function(stack) {
-	var expr = stack.join('');
+var noOctalsEval = function(expr) {
+	// var expr = stack.join('');
 	var regex = /\d+/;
 	var match = regex.exec(expr);
 	var sum = 0;
@@ -34,36 +18,68 @@ var eval1 = function(stack) {
 		match = regex.exec(expr);
 	}
 
-	return sum;
+	// console.log(expr);
+	// var a = expr.split('+');
+	// var an = [];
+	// a.forEach(function(add) {
+	// 	var s = add.split('-');
+	// 	var sn = [];
+	// 	s.forEach(function(num) {
+	// 		sn.push(parseInt(num,10));
+	// 	});
+	// 	an.push(sn.join('-'));
+	// });
+	// expr = an.join('+');
+	// console.log(expr);
+
+	return expr;
 };
 
-var expr = function(left, right) {
-	if (0 === right.length) {
-		reportIfUgly(eval1(left));
-		return;
+var UglyExpressions = function() {
+};
+
+UglyExpressions.prototype.isUgly = function(candidate) {
+	var primes = [2, 3, 5, 7];
+
+	for(var i in primes) {
+		if (0 === candidate % primes[i]) return true;
 	}
-
-	var m = right.shift();
-	left.push('+',m);
-	expr(left.slice(0), right.slice(0));
-	left.splice(left.length-2, 1, '-');
-	expr(left.slice(0), right.slice(0));
-	left.splice(left.length-2, 1);
-	expr(left.slice(0), right.slice(0));
+	return false;
 };
 
-var findUglyExpressions = function(num) {
-	results = 0;
+UglyExpressions.prototype.makeExpressions = function(num) {
+	var expressions = [];
 	var s = num.split('');
 	var first = s.shift();
+	var expr = function(left, right) {
+		if (0 === right.length) {
+			expressions.push(left.join(''));
+			return;
+		}
+
+		var m = right.shift();
+		left.push('+',m);
+		expr(left.slice(0), right.slice(0));
+		left.splice(left.length-2, 1, '-');
+		expr(left.slice(0), right.slice(0));
+		left.splice(left.length-2, 1);
+		expr(left.slice(0), right.slice(0));
+	};
 	expr([first], s);
 
-	console.log(results);
+	return expressions;
 };
 
-var tests = fs.readFileSync(process.argv[2]).toString().split('\n');
-tests.forEach(function(test) {
-	if ("" !== test) {
-		findUglyExpressions(test.trim());
-	}
+fs.readFileSync(process.argv[2]).toString().split('\n').filter(function(test) {
+	return "" !== test;
+}).forEach(function(test) {
+	var ugly = new UglyExpressions();
+	var expressions = ugly.makeExpressions(test.trim());
+	var count = 0;
+	expressions.forEach(function(expression) {
+		if (ugly.isUgly(noOctalsEval(expression))) {
+			count++;
+		}
+	});
+	console.log(count);
 });
