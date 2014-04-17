@@ -94,7 +94,6 @@ describe("poker", function() {
 		expect(poker.compare(left,right)).toBe(1);
 	});
  
-
 	it ("left's 10's over 4 matches right's 10's over 4", function() {
 		var left = poker.review("TH TD 2H 3H 4H".split(' '));
 		var right = poker.review("TS TC 2S 3S 4D".split(' '));
@@ -106,7 +105,6 @@ describe("poker", function() {
 		var right = poker.review("AH AC AS QD JD".split(' '));
 		expect(poker.compare(left,right)).toBe(-1);
 	});
- 
 
 	it ("left's 6 high straight matches right's 6 high straight", function() {
 		var left = poker.review("2S 3C 4S 5C 6S".split(' '));
@@ -181,7 +179,7 @@ describe("poker", function() {
 		expect(poker.compare(left,right)).toBe(1);
 	});
 
-	it ("left's straight beats rights three of a kind", function() {
+	it ("left's straight beats right's three of a kind", function() {
 		var left = poker.review("AH JD QS KH TD".split(' '));
 		var right = poker.review("9H 9D 9S TS 8H".split(' '));
 		expect(poker.compare(left,right)).toBe(-1);
@@ -191,6 +189,24 @@ describe("poker", function() {
 		var left = poker.review("AH AS KC KD QS".split(' '));
 		var right = poker.review("9H 9D 9S TS 8H".split(' '));
 		expect(poker.compare(left,right)).toBe(1);
+	});
+
+	it ("left's two pair (K's and 3's over Q) beats right's two pair (T's and 8's over 9)", function() {
+		var left = poker.review("KS KD 3H 3C QS".split(' '));
+		var right = poker.review("8D TH 9S TS 8H".split(' '));
+		expect(poker.compare(left,right)).toBe(-1);
+	});
+
+	it ("left's two pair (K's and T's over Q) beats right's two pair (K's and 8's over 9)", function() {
+		var left = poker.review("KS KD TH TC QS".split(' '));
+		var right = poker.review("8D KH 9S KC 8H".split(' '));
+		expect(poker.compare(left,right)).toBe(-1);
+	});
+
+	it ("left's two pair (K's and T's over Q) beats right's two pair (K's and T's over 9)", function() {
+		var left = poker.review("KS KD TH TC QS".split(' '));
+		var right = poker.review("TD KH 9S KC TH".split(' '));
+		expect(poker.compare(left,right)).toBe(-1);
 	});
 
 	it ("left's two pair beats right's pair", function() {
