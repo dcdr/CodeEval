@@ -116,15 +116,17 @@ var compare = function(left, right) {
 			rscore = rank(right.threeOfAKind[0]);
 			break;
 		case 2: // two pair
-		  lscore = rank(left.pairs.sort().reverse()[0]);
-		  rscore = rank(right.pairs.sort().reverse()[0]);
+			lpair = left.pairs.sort(rankorder);
+			rpair = right.pairs.sort(rankorder);
+		  lscore = rank(lpair[0]);
+		  rscore = rank(rpair[0]);
 		  // if the first pairs are equal, try the second pair
 		  if (lscore == rscore) {
-			  lscore = rank(left.pairs.sort().reverse()[1]);
-			  rscore = rank(right.pairs.sort().reverse()[1]);
+			  lscore = rank(lpair[1]);
+			  rscore = rank(rpair[1]);
 				// if the second pairs are equal, find the high card
 				if (lscore == rscore) {
-					faces.forEach(function(face) {
+					facesReversed.forEach(function(face) {
 						if (0 < left[face].length) { lscore = rank(face); }
 						if (0 < right[face].length) { rscore = rank(face); }
 					});
